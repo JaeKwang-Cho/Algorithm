@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-	__int16 t,n;
+	__int32 t,n;
 	cin >> t;
 
 	__int32** a = new __int32* [t];
@@ -17,32 +17,22 @@ int main()
 	{
 		cin >> n;
 		a[i] = new __int32[n];
+		__int64 l = 0, r = 0;
 		for (int j = 0; j < n; j++)
 		{
 			cin >> a[i][j];
 		}
+		res[i] = true;
 		for (int j = 0; j < n; j++)
 		{
-			sum += a[i][j];
-			if (sum <= 0)
+			l += a[i][j];
+			r += a[i][n - 1 - j];
+
+			if (l <= 0 || r <= 0)
 			{
 				res[i] = false;
-				goto POINT;
 			}
 		}
-		sum = 0;
-		for (int j = n-1; j >= 0; j--)
-		{
-			sum += a[i][j];
-			if (sum <= 0)
-			{
-				res[i] = false;
-				goto POINT;
-			}
-		}
-		res[i] = true;
-	POINT:
-		sum = 0;
 	}
 	for (int i = 0; i < t; i++)
 	{
