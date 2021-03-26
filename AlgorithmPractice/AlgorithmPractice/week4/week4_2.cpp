@@ -3,6 +3,8 @@
 using namespace std;
 size_t paint_fence(__int32* arr, size_t start, size_t end, __int32 offset);
 
+
+// use segment tree
 int main()
 {
 	size_t n;
