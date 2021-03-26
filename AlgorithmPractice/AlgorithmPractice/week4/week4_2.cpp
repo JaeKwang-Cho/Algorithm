@@ -1,93 +1,64 @@
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
-size_t paint_fence(__int32* arr, size_t start, size_t end, __int32 offset);
+size_t paint_fence(size_t start, size_t end);
+__int32 arr[5001];
 
-
-// use segment tree
 int main()
 {
 	size_t n;
 	cin >> n;
-	__int32* a = new __int32[n];
-	for (int i = 0; i < n; i++)
+	for (int i = 1; i <= n; i++)
 	{
-		cin >> a[i];
+		cin >> arr[i];
 	}
 
-	cout << paint_fence(a, 0, n - 1, 0);
+	cout << paint_fence(1, n);
 
 	return 0;
 }
 
-size_t paint_fence(__int32* arr, size_t start, size_t end, __int32 offset)
+size_t paint_fence(size_t start, size_t end)
 {
-	size_t touches = 0;
-
 	size_t num_of_fences = end - start + 1;
 
-	if (num_of_fences == 1)
+	size_t min_height = 0;
+	__int32 min = arr[start];
+	for (int i = start; i <= end; i++)
 	{
-		if (arr[start] == offset)
+		if (min >= arr[i])
 		{
-			return 0;
+			min = arr[i];
+		}
+	}
+	for (int i = start; i <= end; i++)
+	{
+		arr[i] -= min;
+	}
+
+	min_height += min;
+	for (int i = start; i <= end;i++)
+	{
+		if (arr[i] == 0)
+		{
+			i++;
 		}
 		else
 		{
-			return 1;
+			size_t new_start = i;
+			while (arr[i] != 0)i++;
+			min_height += paint_fence(new_start, i - 1);
 		}
-	}
-	if (num_of_fences == 2)
-	{
-		if (arr[start] == arr[end] && arr[start] - offset == 1)
-		{
-			return 1;
-		}
-		else if (arr[start] == offset && arr[end] == offset)
-		{
-			return 0;
-		}
-		else if (arr[start] == offset || arr[end] == offset)
-		{
-			return 1;
-		}
-		else
-		{
-			return 2;
-		}
+		i--;
 	}
 
-	size_t min_index = 0;
-	for (int i = start; i < end; i++)
-	{
-		if (arr[min_index] >= arr[i])
-		{
-			min_index = i;
-		}
-	}
-
-	if (start == min_index)
-	{
-		touches += paint_fence(arr, min_index +1 ,end , arr[min_index]);
-	}
-	else if (end == min_index)
-	{
-		touches += paint_fence(arr, start, min_index-1, arr[min_index]);
-	}
-	else
-	{
-		touches += paint_fence(arr, start, min_index - 1, arr[min_index]);
-		touches += paint_fence(arr, min_index + 1, end, arr[min_index]);
-	}
-
-	touches += (arr[min_index] - offset);
-
-	if (touches >= num_of_fences)
+	if (min_height > num_of_fences)
 	{
 		return num_of_fences;
 	}
 	else
 	{
-		return touches;
+		return min_height;
 	}
 }
