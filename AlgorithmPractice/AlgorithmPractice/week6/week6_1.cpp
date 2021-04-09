@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 
+// 706c
 using namespace std;
 char temp[100000];
 vector<string> arr;
@@ -14,7 +15,7 @@ bool strCompare(string latter, string former)
 	__int32 len1 = latter.size(), len2 = former.size();
 	if (len1 >= len2)
 	{
-		for (int i = 0; i < len1; i++)
+		for (int i = 0; i < len2; i++)
 		{
 			if (latter[i] < former[i])
 			{
@@ -29,7 +30,7 @@ bool strCompare(string latter, string former)
 	}
 	else
 	{
-		for (int i = 0; i < len2; i++)
+		for (int i = 0; i < len1; i++)
 		{
 			if (latter[i] < former[i])
 			{
@@ -75,15 +76,15 @@ int main()
 
 	for (int i = 1; i < n; i++)
 	{
-		result[0][i] = LONG_MAX;
-		result[1][i] = LONG_MAX;
+		result[0][i] = LLONG_MAX/2;
+		result[1][i] = LLONG_MAX/2;
 		if (strCompare(arr[i], arr[i - 1]) )
 		{
 			result[0][i] = result[0][i - 1];
 		}
 		if (strCompare(arr[i],rev[i - 1]))
 		{
-			if (result[0][i] < result[1][i - 1])
+			if (result[0][i] <= result[1][i - 1])
 			{
 				result[0][i] = result[0][i];
 			}
@@ -98,7 +99,7 @@ int main()
 		}
 		if (strCompare(rev[i],rev[i - 1]))
 		{
-			if (result[1][i] >( result[1][i - 1] + costs[i]))
+			if (result[1][i] >(result[1][i - 1] + costs[i]))
 			{
 				result[1][i] = result[1][i - 1] + costs[i];
 			}
@@ -117,7 +118,7 @@ int main()
 	{
 		ans = result[1][n - 1];
 	}
-	if (ans >= LONG_MAX)
+	if (ans >= LLONG_MAX / 2)
 	{
 		cout << -1 << endl;
 	}
