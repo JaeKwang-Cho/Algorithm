@@ -11,7 +11,6 @@ typedef struct _node
 	__int32 rootDist;
 	__int32 nChild;
 }node;
-
 node nodes[200000];
 vector<__int32> arr[200000];
 __int32 result[200000];
