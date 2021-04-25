@@ -8,14 +8,13 @@ using namespace std;
 struct city
 {
 	vector<int> children;
+	int num_child = 0;;
 	vector<bool> direc_child;
-	int* child;
-	int prev;
-	int select_flip_num = 0;
+	vector<int> child_flip;
 	int root_flip_num = 0;
 };
 
-city* cities;
+city cities [200000];
 
 void make_tree(int n)
 {
@@ -23,80 +22,127 @@ void make_tree(int n)
 	{
 		int to, from;
 		cin >> to >> from;
-
-		cities[i].child = new int[n];
 		
 		(cities + to - 1)->children.push_back(from - 1);
 		(cities + to - 1)->direc_child.push_back(true);
+		(cities + to - 1)->num_child++;
 
 		(cities + from - 1)->children.push_back(to - 1);
 		(cities + from - 1)->direc_child.push_back(false);
+		(cities + from - 1)->num_child++;
 	}
 }
 int count_tree(int n, int prev)
 {
-	(cities + n)->prev = prev;
 	for (auto var: (cities + n)->children)
 	{
 		if (var != prev)
 		{
-			(cities + n)->child[var] = (count_tree(var, n));
-			(cities + n)->root_flip_num += (cities + n)->child[var];
+			int temp = count_tree(var, n);
+			(cities + n)->child_flip.push_back(temp);
+			(cities + n)->root_flip_num += temp;
+		}
+		else
+		{
+			(cities + n)->child_flip.push_back(-1);
 		}
 	}
-	for (auto var : (cities + n)->direc_child)
+	if (prev != -1)
 	{
-		if (var == true)
+		for (int i = 0; i < (cities + n)->num_child; i++)
 		{
-			(cities + n)->root_flip_num++;
+			if ((cities + n)->children[i] == prev)
+			{
+				if ((cities + n)->direc_child[i] == true)
+				{
+					return (cities + n)->root_flip_num + 1;
+				}
+			}
 		}
 	}
 	return (cities + n)->root_flip_num;
 }
-void select_tree(int n, int prev)
+void select_tree(int n, int prev, bool direc)
 {
-	(cities + n)->select_flip_num += (cities + n)->root_flip_num;
 	if (prev == -1)
 	{
-		for (auto var : (cities + n)->children)
+		for (int i =0; i< (cities + n)->num_child;i++)
 		{
-			select_tree(var, n);
+			select_tree((cities + n)->children[i], n, (cities + n)->direc_child[i]);
 		}
 	}
 	else
 	{
-		for (auto var : (cities + prev)->children)
+		(cities + n)->root_flip_num = 0;
+		(cities + n)->root_flip_num += (cities + prev)->root_flip_num;
+		if (direc == false)
 		{
-			if (var != n)
+			(cities + n)->root_flip_num--;
+		}
+		else
+		{
+			(cities + n)->root_flip_num++;
+		}
+		for (int i = 0; i < (cities + n)->num_child; i++)
+		{
+			if ((cities + n)->children[i] != prev)
 			{
-				(cities + n)->select_flip_num += (cities + prev)->select_flip_num - (cities+prev)->child[n] + (cities + prev)->direc_child[n];
+				select_tree((cities + n)->children[i], n, (cities + n)->direc_child[i]);
+			}
+		}
+		
+		/*
+		for (int i = 0; i < (cities + prev)->num_child; i++)
+		{
+			if ((cities + prev)->children[i] == n)
+			{
+				if ((cities + prev)->direc_child[i] == true)
+				{
+					(cities + n)->root_flip_num++;
+				}
 				select_tree(var, n);
 			}
 		}
+		*/
 	}
+	return;
 }
-
-
 
 int main()
 {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+
 	int n;
 	cin >> n;
-	
-	cities = new city[n];
+
 
 	make_tree(n);
 
 	count_tree(0,-1);
 
-	select_tree(0, -1);
+	select_tree(0, -1, true);
+
 
 	int min_flip = n+1;
 	vector<int> capitals;
 
-	
+	for (int i = 0; i < n; i++)
+	{
+		if (min_flip > (cities + i)->root_flip_num)
+		{
+			vector<int>().swap(capitals);
+			min_flip = (cities + i)->root_flip_num;
+			capitals.push_back(i);
+		}
+		else if (min_flip == (cities + i)->root_flip_num)
+		{
+			capitals.push_back(i);
+		}
+	}
 
-	cout << min_flip << endl;
+
+	cout << min_flip << "\n";
 	for (auto var : capitals)
 	{
 		cout << var +1 << " ";
