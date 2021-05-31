@@ -118,7 +118,7 @@ int main()
 	{
 		cin >> src >> des >> weight;
 		temp.des = des;
-		temp.weight = des;
+		temp.weight = weight;
 		temp.edgeNum = i;
 		temp.isTrail = false;
 
